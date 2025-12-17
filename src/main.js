@@ -1,10 +1,36 @@
 import './style.css'
 
+const API_URL = 'http://localhost:5353/api';
 const names = ['vuk', 'djura', 'filip', 'guza', 'jova', 'pareza', 'zki', 'kiza'];
 const emojis = ['🎁', '⭐', '🎄', '❄️', '🎅', '🎉', '🔔', '🌟'];
 
 let assignments = {};
 let flippedCards = new Set();
+
+async function fetchGameState() {
+  try {
+    const response = await fetch(`${API_URL}/state`);
+    const data = await response.json();
+    assignments = data.assignments;
+    flippedCards = new Set(data.flippedCards);
+    return data;
+  } catch (error) {
+    console.error('Error fetching game state:', error);
+    return null;
+  }
+}
+
+async function flipCard(name) {
+  try {
+    await fetch(`${API_URL}/flip`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name })
+    });
+  } catch (error) {
+    console.error('Error flipping card:', error);
+  }
+}
 
 function shuffleArray(array) {
   const arr = [...array];
@@ -50,6 +76,7 @@ function createCard(name, emoji, index) {
   front.innerHTML = `
     <div class="emoji">${emoji}</div>
     <h2>${name}</h2>
+    <span class="opened-label">otvorio</span>
   `;
   
   const back = document.createElement('div');
@@ -81,11 +108,12 @@ function createCard(name, emoji, index) {
   back.appendChild(snakeBorder);
   wrapper.appendChild(card);
   
-  card.addEventListener('click', () => {
+  card.addEventListener('click', async () => {
     if (flippedCards.has(name)) return;
     
     card.classList.add('flipped');
     flippedCards.add(name);
+    await flipCard(name);
     
     setTimeout(() => {
       snakeBorder.classList.add('active');
@@ -93,6 +121,7 @@ function createCard(name, emoji, index) {
     
     setTimeout(() => {
       snakeBorder.classList.remove('active');
+      card.classList.remove('flipped');
       card.classList.add('locked');
     }, 5800);
   });
@@ -110,32 +139,44 @@ function renderCards() {
   shuffledNames.forEach((name, index) => {
     const card = createCard(name, shuffledEmojis[index], index);
     container.appendChild(card);
+    
+    if (flippedCards.has(name)) {
+      const cardElement = card.querySelector('.card');
+      cardElement.classList.add('locked');
+    }
   });
 }
 
-function resetGame() {
-  assignments = generateSecretSanta(names);
-  flippedCards.clear();
-  renderCards();
+const backgroundMusic = new Audio('/pesma.mp3');
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.3;
+
+function createSnowflakes() {
+  const snowflakesContainer = document.querySelector('.snowflakes');
+  const numberOfFlakes = 50;
+  
+  for (let i = 0; i < numberOfFlakes; i++) {
+    const snowflake = document.createElement('div');
+    snowflake.className = 'snowflake';
+    snowflake.innerHTML = '❄';
+    snowflake.style.left = `${Math.random() * 100}%`;
+    snowflake.style.animationDuration = `${Math.random() * 10 + 10}s`;
+    snowflake.style.animationDelay = `${Math.random() * 10}s`;
+    snowflake.style.fontSize = `${Math.random() * 1.5 + 0.5}em`;
+    snowflake.style.opacity = Math.random() * 0.6 + 0.4;
+    snowflakesContainer.appendChild(snowflake);
+  }
 }
 
-document.getElementById('randomBtn').addEventListener('click', () => {
-  const btn = document.getElementById('randomBtn');
-  btn.style.animation = 'spin 0.5s ease-in-out';
-  
-  setTimeout(() => {
-    btn.style.animation = '';
-    resetGame();
-  }, 500);
+async function init() {
+  await fetchGameState();
+  renderCards();
+  createSnowflakes();
+}
+
+document.getElementById('startBtn').addEventListener('click', () => {
+  document.getElementById('welcomeModal').classList.add('hidden');
+  backgroundMusic.play().catch(err => console.log('Audio play failed:', err));
 });
 
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-`;
-document.head.appendChild(style);
-
-resetGame();
+init();

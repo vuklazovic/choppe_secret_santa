@@ -7,12 +7,24 @@
     <title>CHOPPE SECRET SANTA</title>
   </head>
   <body>
+    <div class="snowflakes" aria-hidden="true"></div>
     <div id="app">
       <div class="header">
         <h1>🎅 CHOPPE SECRET SANTA 🎄</h1>
-        <button id="randomBtn" class="random-btn">🔄 RANDOMIZE</button>
       </div>
       <div id="cardsContainer" class="cards-container"></div>
+    </div>
+    
+    <div id="welcomeModal" class="modal">
+      <div class="modal-content">
+        <h2>🎅 Dobrodošli u Choppe Secret Santa – specijalno izdanje 🎄</h2>
+        <p>Ispred vas se nalaze kartice sa imenima svih učesnika. Molimo vas da kliknete isključivo na karticu sa sopstvenim imenom.</p>
+        <p><em>(Napomena: ovo se posebno odnosi na Parezu i Zkija.)</em></p>
+        <p>Nakon što kliknete na svoju karticu, imaćete 5 sekundi da vidite kome dodeljujete poklon. Po isteku tog vremena, kartica se nepovratno briše.</p>
+        <p>Ukoliko greškom kliknete na tuđe ime, dotična osoba neće moći da vidi svog Secret Santa partnera, a kum i ja ćemo biti prinuđeni da primenimo disciplinske mere.</p>
+        <p><strong>Srećno svima i želimo vam da dobijete interesantne poklone 🎁</strong></p>
+        <button id="startBtn" class="start-btn">ZAPOČNI</button>
+      </div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>
