@@ -1,6 +1,6 @@
 import './style.css'
 
-const API_URL = 'http://localhost:5353/api';
+const API_URL = 'https://rail-appointment-enforcement-str.trycloudflare.com/api';
 const names = ['vuk', 'djura', 'filip', 'guza', 'jova', 'pareza', 'zki', 'kiza'];
 const emojis = ['🎁', '⭐', '🎄', '❄️', '🎅', '🎉', '🔔', '🌟'];
 
