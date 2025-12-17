@@ -60,8 +60,25 @@ function createCard(name, emoji, index) {
     <div class="gift-to">${assignments[name]}</div>
   `;
   
+  const snakeBorder = document.createElement('div');
+  snakeBorder.className = 'snake-border';
+  snakeBorder.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="blueGradient-${name}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <path d="M 5,5 L 95,5 L 95,95 L 5,95 Z" 
+            stroke="url(#blueGradient-${name})" 
+            fill="none" />
+    </svg>
+  `;
+  
   card.appendChild(front);
   card.appendChild(back);
+  back.appendChild(snakeBorder);
   wrapper.appendChild(card);
   
   card.addEventListener('click', () => {
@@ -71,8 +88,13 @@ function createCard(name, emoji, index) {
     flippedCards.add(name);
     
     setTimeout(() => {
+      snakeBorder.classList.add('active');
+    }, 800);
+    
+    setTimeout(() => {
+      snakeBorder.classList.remove('active');
       card.classList.add('locked');
-    }, 5000);
+    }, 5800);
   });
   
   return wrapper;
